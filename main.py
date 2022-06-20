@@ -20,4 +20,9 @@ class Loss:
 class Loss_entropy(Loss):
     def fpass(self, y_pre, y_tru):
         samples = len(y_pre)
-        y_pre
+        y_pre_clipped = np.clip(y_pre, 1e-7, 1-1e-7)
+
+        if len(y_tru.shape) == 1:
+            c_confidences = y_pre_clipped[range(samples), y_tru]
+        elif len(y_tru.shape) == 2:
+            c_confidences = np.sum(y_pre_clipped*y_tru, axis=1)
