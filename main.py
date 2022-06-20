@@ -1,13 +1,16 @@
 import numpy as np
-import cv2
+from PIL import Image
 import nnfs
 from nnfs.datasets import spiral_data
 
 from activations import Activation_R, Activation_SM
 
 nnfs.init()
+colour_im = Image.open('dataset/colour/istockphoto-1045886560-612x612.jpg')
+colour_image_array = np.array(colour_im)
 
-
+g_im = Image.open('dataset/greyscale/download.png')
+g_image_array = np.array(g_im)
 class LayerD:
     def __init__(self, n_inputs, n_neurons):
         self.weights = 0.01 * np.random.randn(n_inputs, n_neurons)
@@ -29,6 +32,8 @@ class Loss_entropy(Loss):
         samples = len(y_pre)
         y_pre_clipped = np.clip(y_pre, 1e-7, 1 - 1e-7)
 
+        print(y_tru.shape)
+
         if len(y_tru.shape) == 1:
             c_confidences = y_pre_clipped[range(samples), y_tru]
         elif len(y_tru.shape) == 2:
@@ -38,12 +43,13 @@ class Loss_entropy(Loss):
         return nlog_like
 
 
-X, y = spiral_data(samples=100, classes=3)
+X = g_image_array
+y = colour_image_array
 
-layer1 = LayerD(2, 3)
+layer1 = LayerD(4, 4)
 active1 = Activation_R()
 
-layer2 = LayerD(3, 3)
+layer2 = LayerD(4, 3)
 active2 = Activation_SM()
 
 layer1.fpass(X)
