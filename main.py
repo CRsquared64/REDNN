@@ -54,4 +54,6 @@ active2.fpass(layer2.output)
 
 print(active2.output[:5])
 loss_func = Loss_entropy()
-loss = loss_func.calc()
+loss = loss_func.calc(active2.output, y)
+
+print("Loss:", loss)
