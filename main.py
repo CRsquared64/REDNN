@@ -1,11 +1,10 @@
 import numpy as np
 from PIL import Image
-import nnfs
-from nnfs.datasets import spiral_data
+
 
 from activations import Activation_R, Activation_SM
 
-nnfs.init()
+
 colour_im = Image.open('dataset/colour/istockphoto-1045886560-612x612.jpg')
 colour_image_array = np.array(colour_im)
 
@@ -13,7 +12,7 @@ g_im = Image.open('dataset/greyscale/download.png')
 g_image_array = np.array(g_im)
 class LayerD:
     def __init__(self, n_inputs, n_neurons):
-        self.weights = 0.01 * np.random.randn(n_inputs, n_neurons)
+        self.weights =  0.01 * np.random.randn(n_inputs, n_neurons)
         self.biases = np.zeros((1, n_neurons))
 
     def fpass(self, inputs):
@@ -32,12 +31,8 @@ class Loss_entropy(Loss):
         samples = len(y_pre)
         y_pre_clipped = np.clip(y_pre, 1e-7, 1 - 1e-7)
 
-        print(y_tru.shape)
-
-        if len(y_tru.shape) == 1:
-            c_confidences = y_pre_clipped[range(samples), y_tru]
-        elif len(y_tru.shape) == 2:
-            c_confidences = np.sum(y_pre_clipped * y_tru, axis=1)
+        #c_confidences = y_pre_clipped[range(samples), y_tru] // 1 dimensional
+        c_confidences = np.sum(y_pre_clipped * y_tru, axis=1)
 
         nlog_like = -np.log(c_confidences)
         return nlog_like
@@ -58,7 +53,7 @@ active1.fpass(layer1.output)
 layer2.fpass(active1.output)
 active2.fpass(layer2.output)
 
-print(active2.output[:5])
+print(active2.output)
 loss_func = Loss_entropy()
 loss = loss_func.calc(active2.output, y)
 
