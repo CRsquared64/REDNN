@@ -11,12 +11,18 @@ colour_image_array = np.array(colour_im)
 g_im = Image.open('dataset/greyscale/download.png')
 g_image_array = np.array(g_im)
 class LayerD:
-    def __init__(self, n_inputs, n_neurons):
+    def __init__(self, n_inputs, n_neurons, inputs):
+        self.inputs = inputs
         self.weights =  0.01 * np.random.randn(n_inputs, n_neurons)
         self.biases = np.zeros((1, n_neurons))
 
     def fpass(self, inputs):
         self.output = np.dot(inputs, self.weights) + self.biases
+
+    def bpass(self, dvalues):
+        self.dweights = np.dot(self.inputs.T, dvalues)
+        self.dbiases = np.sum(dvalues, axis=0, keepdims=True)
+        self.dinputs = np.dot(dvalues, self.weights.T)
 
 
 class Loss:
@@ -41,10 +47,10 @@ class Loss_entropy(Loss):
 X = g_image_array
 y = colour_image_array
 
-layer1 = LayerD(4, 4)
+layer1 = LayerD(2, 64)
 active1 = Activation_R()
 
-layer2 = LayerD(4, 3)
+layer2 = LayerD(64, 3)
 active2 = Activation_SM()
 
 layer1.fpass(X)
