@@ -43,6 +43,14 @@ class Loss_entropy(Loss):
         nlog_like = -np.log(c_confidences)
         return nlog_like
 
+    def backward(self, dvalues, y_true):
+        samples = len(dvalues)
+        labels = len(dvalues[0])
+        if len(y_true.shape) == 1:
+            y_true = np.eye(labels)[y_true]
+        self.dinputs = -y_true / dvalues
+        self.dinputs = self.dinputs / samples
+
 
 X = g_image_array
 y = colour_image_array
