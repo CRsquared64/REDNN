@@ -5,6 +5,10 @@ class Activation_R:
     def fpass(self, inputs):
         self.output = np.maximum(0, inputs)
 
+    def backward(self, dvalues):
+        self.dinputs = dvalues.copy()
+        self.dinputs[self.inputs <= 0] = 0
+
 class Activation_SM:
     def fpass(self, inputs):
         exp_values = np.exp(inputs - np.max(inputs, axis=1, keepdims=True))
